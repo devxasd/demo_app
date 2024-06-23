@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:demo_app/dice_widget.dart';
 import 'package:flutter/material.dart';
 
 var RAND = Random();
@@ -14,17 +15,32 @@ class GradientContainer extends StatefulWidget {
 }
 
 class _GradientContainerState extends State<StatefulWidget> {
-  var url = 'assets/dice-images/dice-1.png';
-  var result = 0;
+  var url1 = 'assets/dice-images/dice-1.png';
+  var url2 = 'assets/dice-images/dice-1.png';
+  var result = "";
+
+  var failCounter = 0;
+  var msgColor = Colors.green;
 
   void rollDice() {
     setState(
       () {
-        var num = RAND.nextInt(6) + 1;
+        var num1 = RAND.nextInt(6) + 1;
 
-        url = 'assets/dice-images/dice-$num.png';
+        url1 = 'assets/dice-images/dice-$num1.png';
 
-        result = result + num;
+        var num2 = RAND.nextInt(6) + 1;
+        url2 = 'assets/dice-images/dice-$num2.png';
+
+        if (num1 == 6 && num2 == 6) {
+          msgColor = Colors.green;
+          result = "Wooho You Diced double Six";
+          failCounter = 0;
+        } else {
+          msgColor = Colors.red;
+          failCounter++;
+          result = "Try again $failCounter";
+        }
       },
     );
   }
@@ -46,9 +62,16 @@ class _GradientContainerState extends State<StatefulWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              url,
-              width: 200,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DiceWidget(
+                  url: url1,
+                ),
+                DiceWidget(
+                  url: url2,
+                ),
+              ],
             ),
             TextButton(
               onPressed: rollDice,
@@ -64,14 +87,24 @@ class _GradientContainerState extends State<StatefulWidget> {
                 ),
               ),
               child: const Text(
-                "Dice",
+                "Roll",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Text("Result $result"),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              result,
+              style: TextStyle(
+                backgroundColor: msgColor,
+                color: Colors.white,
+                fontSize: 26,
+              ),
+            ),
           ],
         ),
       ),
